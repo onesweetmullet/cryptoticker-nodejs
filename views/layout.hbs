@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <script src="https://code.jquery.com/jquery-2.1.4.js" type="text/javascript"></script>
+    <script src="/javascripts/moment.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+    <style type="text/css" media="screen">
+      div.exchangeName {
+          font-size:1.4em;
+          float:left;
+          width:150px;
+      }
+      div.value {
+          font-size:1.4em;
+          float:left;
+      }
+      div.lastUpdated {
+          font-size:.8em;
+          float:right;
+      }
+    </style>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script>
+      var _options = {
+          host: 'localhost',
+          port: 3000,
+          path: '/tradepair'
+      };
+
+      var getLabel = function(data) {
+          var _lastUpdatedFuzzy = getFuzzyDate(data.data.lastUpdated);
+          return "<div class=\"exchangeName\">" + data.data.exchangeFormatted + "</div><div class=\"value\">" + data.data.lastPrice + "</div><div class=\"lastUpdated\">updated: " + _lastUpdatedFuzzy + "</div><div class=\"clearfix\"></div>";
+      };
+
+      var intervalTick = function() {
+          $.get("./tradepair/anxbtc/btc/usd/formatted", function(data, status) {
+              $("li.anxbtc_btc_usd").html( getLabel(data) );
+          });
+
+          $.get("./tradepair/btce/btc/usd/formatted", function(data, status) {
+              $("li.btce_btc_usd").html( getLabel(data) );
+          });
+
+          $.get("./tradepair/coinbase/btc/usd/formatted", function(data, status) {
+              $("li.coinbase_btc_usd").html( getLabel(data) );
+          });
+
+          $.get("./tradepair/vircurex/btc/usd/formatted", function(data, status) {
+              $("li.vircurex_btc_usd").html( getLabel(data) );
+          });
+          //
+          // $.get("http://localhost:3000/tradepair/anxbtc/ltc/usd/formatted", function(data, status) {
+          // 	$("li.anxbtc_ltc_usd").html( getLabel(data) );
+          // });
+
+          $.get("./tradepair/btce/ltc/usd/formatted", function(data, status) {
+              $("li.btce_ltc_usd").html( getLabel(data) );
+          });
+
+          $.get("./tradepair/cryptsy/doge/btc/formatted", function(data, status) {
+              $("li.cryptsy_doge_btc").html( getLabel(data) );
+          });
+      };
+
+      var getFuzzyDate = function(date) {
+          //var newDate = new Date(date);
+          var _dataDate = moment(new Date(date).getTime());
+          var _currentDate = moment(new Date().getTime());
+          var _return = moment.duration(_currentDate - _dataDate).seconds().toString() + " seconds ago"
+
+          return _return;
+      };
+
+      var _interval = setInterval(intervalTick, 5000);
+      intervalTick();
+
+    </script>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    {{{body}}}
+  </body>
+</html>
