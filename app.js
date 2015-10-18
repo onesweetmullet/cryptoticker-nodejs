@@ -19,6 +19,7 @@ app.set('view engine', 'hbs');
 
 app.get('/tradepair/:exchange/:prefix/:suffix', apicache('30 seconds'), tradePair.getRaw);
 app.get('/tradepair/:exchange/:prefix/:suffix/formatted', apicache('30 seconds'), tradePair.getFormatted);
+app.get('/tradepair/:prefix/:suffix', apicache('30 seconds'), tradePair.getAll);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

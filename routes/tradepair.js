@@ -1,15 +1,17 @@
 var request = require('request')
-,	requestify = require('requestify');
+,	requestify = require('requestify')
+,   async = require('async');
 
 var getRequestOptions = function(_exchange, _prefix, _suffix) {
-    var _options = {
-        url: "",
-        ttl: 30000
-    };
+    var _options = { };
 
     switch (_exchange) {
         case "anxbtc":
             _options.uri = "https://anxpro.com/api/2/" + _prefix + _suffix + "/money/ticker";
+            break;
+        case "bitstamp":
+            if (_prefix.toLowerCase() === 'btc' && _suffix.toLocaleLowerCase() === "usd")
+                _options.uri = "https://www.bitstamp.net/api/ticker/";
             break;
         case "btce":
             _options.uri = "https://btc-e.com/api/3/ticker/" + _prefix.toLowerCase() + "_" + _suffix.toLowerCase();
@@ -18,10 +20,12 @@ var getRequestOptions = function(_exchange, _prefix, _suffix) {
             _options.uri = "http://data.bter.com/api/1/ticker/" + _prefix + "_" + _suffix;
             break;
         case "coinbase":
-            _options.uri = "https://api.coinbase.com/v2/prices/buy";
-            _options.headers = {
-                "CB-VERSION": "2015-10-11"
-            };
+            if (_prefix.toLowerCase() === 'btc' && _suffix.toLocaleLowerCase() === "usd") {
+                _options.uri = "https://api.coinbase.com/v2/prices/buy";
+                _options.headers = {
+                    "CB-VERSION": "2015-10-11"
+                };
+            }
             break;
         case "cryptsy":
             _options.uri = "http://pubapi2.cryptsy.com/api.php?method=singlemarketdata&marketid=" + getMarketId(_prefix, _suffix);
@@ -59,15 +63,6 @@ exports.getRaw = function(req, res) {
 exports.getFormatted = function(req, res) {
     var _options = getRequestOptions(req.params.exchange, req.params.prefix, req.params.suffix);
 
-    var _requestifyOptions = {
-        method: 'GET',
-        cache: {
-            cache: true,
-            expires: 30
-        },
-        dataType: 'json'
-    };
-
     requestify.get(_options.uri).then(function(response) {
         var _response = response.getBody();
         var _headers = response.getHeaders();
@@ -87,10 +82,121 @@ exports.getFormatted = function(req, res) {
     });
 };
 
+exports.getAll = function(req, res) {
+
+    var _responses = {};
+    var _prefix = req.params.prefix;
+    var _suffix = req.params.suffix;
+
+    async.series([
+
+        function(callback) {
+            var _options = getRequestOptions('anxbtc', _prefix, _suffix);
+
+            requestify.get(_options.uri).then(function(response) {
+                if (response.getBody().result.toString() !== 'error')
+                    _responses.anxbtc = response.getBody();
+                callback();
+            });
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('btce', _prefix, _suffix);
+
+            requestify.get(_options.uri).then(function(response) {
+                var _json = JSON.parse(response.getBody());
+                if (_json.success !== 0)
+                    _responses.btce = JSON.parse(response.getBody());
+                callback();
+            });
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('bitstamp', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    _responses.bitstamp = response.getBody();
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('bter', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    if (response.getBody().result.toString() !== 'false')
+                        _responses.bter = response.getBody();
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('coinbase', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    _responses.coinbase = response.getBody();
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('cryptsy', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    var _json = JSON.parse(response.body);
+                    if (_json.success !== 0)
+                        _responses.cryptsy = _json;
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('vircurex', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    _responses.vircurex = response.getBody();
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+    ], function(err) {
+        if (err) {
+            res.json(500, { message: err});
+        } else {
+            res.json(200, _responses);
+        }
+
+    });
+
+
+};
+
 var getExchangeFormatted = function(exchange) {
     switch (exchange) {
         case "anxbtc":
             return "ANXBTC";
+        case "bitstamp":
+            return "Bitstamp";
         case "btce":
             return "BTC-E";
         case "coinbase":
@@ -115,6 +221,9 @@ var getFormattedPrice = function(exchange, prefix, suffix, data) {
         switch (exchange) {
             case "anxbtc":
                 return data.data.last.value;
+                break;
+            case "bitstamp":
+                return data.last;
                 break;
             case "btce":
                 var _json = JSON.parse(data);
