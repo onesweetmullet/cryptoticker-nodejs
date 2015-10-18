@@ -42,19 +42,19 @@
       };
 
       var intervalTick = function() {
-          $.get("./tradepair/anxbtc/btc/usd/formatted", function(data, status) {
+          $.get("./tradepair/get/anxbtc/btc/usd/formatted", function(data, status) {
               $("li.anxbtc_btc_usd").html( getLabel(data) );
           });
 
-          $.get("./tradepair/btce/btc/usd/formatted", function(data, status) {
+          $.get("./tradepair/get/btce/btc/usd/formatted", function(data, status) {
               $("li.btce_btc_usd").html( getLabel(data) );
           });
 
-          $.get("./tradepair/coinbase/btc/usd/formatted", function(data, status) {
+          $.get("./tradepair/get/coinbase/btc/usd/formatted", function(data, status) {
               $("li.coinbase_btc_usd").html( getLabel(data) );
           });
 
-          $.get("./tradepair/vircurex/btc/usd/formatted", function(data, status) {
+          $.get("./tradepair/get/vircurex/btc/usd/formatted", function(data, status) {
               $("li.vircurex_btc_usd").html( getLabel(data) );
           });
           //
@@ -62,11 +62,11 @@
           // 	$("li.anxbtc_ltc_usd").html( getLabel(data) );
           // });
 
-          $.get("./tradepair/btce/ltc/usd/formatted", function(data, status) {
+          $.get("./tradepair/get/btce/ltc/usd/formatted", function(data, status) {
               $("li.btce_ltc_usd").html( getLabel(data) );
           });
 
-          $.get("./tradepair/cryptsy/doge/btc/formatted", function(data, status) {
+          $.get("./tradepair/get/cryptsy/doge/btc/formatted", function(data, status) {
               $("li.cryptsy_doge_btc").html( getLabel(data) );
           });
       };

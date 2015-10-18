@@ -17,9 +17,11 @@ var tradePair = require('./routes/tradepair');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-app.get('/tradepair/:exchange/:prefix/:suffix', apicache('30 seconds'), tradePair.getRaw);
-app.get('/tradepair/:exchange/:prefix/:suffix/formatted', apicache('30 seconds'), tradePair.getFormatted);
-app.get('/tradepair/:prefix/:suffix', apicache('30 seconds'), tradePair.getAll);
+app.get('/tradepair/get/:exchange/:prefix/:suffix', apicache('30 seconds'), tradePair.getRaw);
+app.get('/tradepair/get/:exchange/:prefix/:suffix/formatted', apicache('30 seconds'), tradePair.getFormatted);
+
+app.get('/tradepair/getall/:prefix/:suffix', apicache('30 seconds'), tradePair.getAll);
+app.get('/tradepair/getall/:prefix/:suffix/formatted', apicache('30 seconds'), tradePair.getAllFormatted);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

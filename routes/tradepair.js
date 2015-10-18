@@ -67,18 +67,18 @@ exports.getFormatted = function(req, res) {
         var _response = response.getBody();
         var _headers = response.getHeaders();
 
-        var _return = {
-            exchange: req.params.exchange,
-            exchangeFormatted: getExchangeFormatted(req.params.exchange),
-            prefix: req.params.prefix,
-            suffix: req.params.suffix,
-            lastPrice: "",
-            lastUpdated: new Date()// _headers["date"]
-        };
+        //var _return = {
+        //    exchange: req.params.exchange,
+        //    exchangeFormatted: getExchangeFormatted(req.params.exchange),
+        //    prefix: req.params.prefix,
+        //    suffix: req.params.suffix,
+        //    lastPrice: "",
+        //    lastUpdated: new Date()// _headers["date"]
+        //};
+        //
+        //_return.lastPrice = getFormattedPrice(req.params.exchange, req.params.prefix, req.params.suffix, _response).toString();
 
-        _return.lastPrice = getFormattedPrice(req.params.exchange, req.params.prefix, req.params.suffix, _response).toString();
-
-        res.json(200, { data: _return });
+        res.json(200, { data: getNormalizedData(req.params.exchange, req.params.prefix, req.params.suffix, _response) });
     });
 };
 
@@ -187,8 +187,132 @@ exports.getAll = function(req, res) {
         }
 
     });
+};
+
+exports.getAllFormatted = function(req, res) {
+
+    var _responses = {};
+    var _prefix = req.params.prefix;
+    var _suffix = req.params.suffix;
+
+    async.series([
+
+        function(callback) {
+            var _options = getRequestOptions('anxbtc', _prefix, _suffix);
+
+            requestify.get(_options.uri).then(function(response) {
+                if (response.getBody().result.toString() !== 'error') {
+                    _responses.anxbtc = getNormalizedData('anxbtc', req.params.prefix, req.params.suffix, response.getBody());
+                }
+                callback();
+            });
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('btce', _prefix, _suffix);
+
+            requestify.get(_options.uri).then(function(response) {
+                var _json = JSON.parse(response.getBody());
+                if (_json.success !== 0)
+                    _responses.btce = getNormalizedData('btce', req.params.prefix, req.params.suffix, JSON.parse(response.getBody()));
+                callback();
+            });
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('bitstamp', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    var _response = response.getBody();
+                    _responses.bitstamp = getNormalizedData('bitstamp', req.params.prefix, req.params.suffix, _response);
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('bter', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    if (response.getBody().result.toString() !== 'false')
+                        _responses.bter = getNormalizedData('bter', req.params.prefix, req.params.suffix, response.getBody());
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('coinbase', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    _responses.coinbase = getNormalizedData('coinbase', req.params.prefix, req.params.suffix, response.getBody());
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('cryptsy', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    var _json = JSON.parse(response.body);
+                    if (_json.success !== 0)
+                        _responses.cryptsy = getNormalizedData('cryptsy', req.params.prefix, req.params.suffix, _json);
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+        function(callback) {
+            var _options = getRequestOptions('vircurex', _prefix, _suffix);
+
+            if (_options.uri) {
+                requestify.get(_options.uri).then(function(response) {
+                    _responses.vircurex = getNormalizedData('vircurex', req.params.prefix, req.params.suffix, response.getBody());
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        },
+
+    ], function(err) {
+        if (err) {
+            res.json(500, { message: err});
+        } else {
+            res.json(200, _responses);
+        }
+
+    });
+};
 
 
+
+var getNormalizedData = function(exchange, prefix, suffix, response) {
+    var _return = {
+        exchange: exchange,
+        exchangeFormatted: getExchangeFormatted(exchange),
+        prefix: prefix,
+        suffix: suffix,
+        lastPrice: "",
+        lastUpdated: new Date()// _headers["date"]
+    };
+
+    _return.lastPrice = getFormattedPrice(exchange, prefix, suffix, response).toString();
+
+    return _return;
 };
 
 var getExchangeFormatted = function(exchange) {
