@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp" ng-controller="mainController">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <script src="/javascripts/moment.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+    <link rel="stylesheet" href="stylesheets/style.css"/>
+</head>
+<body>
+    <div class="container">
+        <div class="starter-template">
+            <h2>BTC / USD</h2>
+            <ul class="list-group">
+                <li ng-repeat="n in btc_usd" class="list-group-item">
+                    <div class="exchangeName">{{n.exchangeFormatted}}</div>
+                    <div class="value">{{n.lastPrice}}</div>
+                    <div class="lastUpdated">{{n.lastUpdated}}</div>
+                    <div class="clearfix"></div>
+                </li>
+            </ul>
+
+            <h2>LTC / USD</h2>
+            <ul class="list-group">
+                <li ng-repeat="n in ltc_usd" class="list-group-item">
+                    <div class="exchangeName">{{n.exchangeFormatted}}</div>
+                    <div class="value">{{n.lastPrice}}</div>
+                    <div class="lastUpdated">{{n.lastUpdated}}</div>
+                    <div class="clearfix"></div>
+                </li>
+            </ul>
+
+            <h2>DOGE / BTC</h2>
+            <ul class="list-group">
+                <li ng-repeat="n in doge_btc" class="list-group-item">
+                    <div class="exchangeName">{{n.exchangeFormatted}}</div>
+                    <div class="value">{{n.lastPrice}}</div>
+                    <div class="lastUpdated">{{n.lastUpdated}}</div>
+                    <div class="clearfix"></div>
+                </li>
+            </ul>
+    </div>
+
+    <script src="javascripts/angular.min.js"></script>
+    <script src="javascripts/app.js"></script>
+</body>
+</html>
+
+<!--
+    Such currency
+
+░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░
+░░░░░░░░▌▒█░░░░░░░░░░░▄▀▒▌░░░
+░░░░░░░░▌▒▒█░░░░░░░░▄▀▒▒▒▐░░░
+░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░░░
+░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░░░
+░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░░░
+░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌░░
+░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐░░
+░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌░
+░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌░ So crypto
+▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐░
+▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌
+▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐░
+░▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌░
+░▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐░░
+░░▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌░░
+░░░░▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀░░░
+░░░░░░▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀░░░░░
+░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░
+
+    wow
+-->

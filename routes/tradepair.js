@@ -214,7 +214,7 @@ exports.getAllFormatted = function(req, res) {
             requestify.get(_options.uri).then(function(response) {
                 var _json = JSON.parse(response.getBody());
                 if (_json.success !== 0)
-                    _responses.btce = getNormalizedData('btce', req.params.prefix, req.params.suffix, JSON.parse(response.getBody()));
+                    _responses.btce = getNormalizedData('btce', req.params.prefix, req.params.suffix, response.getBody());
                 callback();
             });
         },
@@ -323,6 +323,8 @@ var getExchangeFormatted = function(exchange) {
             return "Bitstamp";
         case "btce":
             return "BTC-E";
+        case "bter":
+            return "BTER";
         case "coinbase":
             return "Coinbase";
         case "vircurex":
@@ -341,32 +343,42 @@ var getFormattedPrice = function(exchange, prefix, suffix, data) {
 
     try
     {
+        var _value = 0;
+
         //var _json = JSON.parse(data);
         switch (exchange) {
             case "anxbtc":
-                return data.data.last.value;
+                _value = data.data.last.value;
                 break;
             case "bitstamp":
-                return data.last;
+                _value = data.last;
                 break;
             case "btce":
                 var _json = JSON.parse(data);
-                return _json[prefix.toLowerCase() + "_" + suffix.toLowerCase()].last;
+                _value = _json[prefix.toLowerCase() + "_" + suffix.toLowerCase()].last;
                 break;
             case "bter":
-                return data.last;
+                _value = data.last;
                 break;
             case "coinbase":
-                return data.data.amount;
+                _value = data.data.amount;
                 break;
             case "cryptsy":
-                return data.return.markets[prefix.toUpperCase()].lasttradeprice;
+                _value = data.return.markets[prefix.toUpperCase()].lasttradeprice;
                 break;
             case "vircurex":
-                return data.last_trade;
+                _value = data.last_trade;
                 break;
             default:
                 break;
+        }
+
+        if (parseFloat(_value.toString()) > 1) {
+            return parseFloat(_value.toString()).toFixed(2);
+        } else if (parseFloat(_value.toString()) == 0) {
+            return parseFloat(0).toFixed(2);
+        } else {
+            return parseFloat(_value.toString()).toFixed(8);
         }
     } catch (err) {
         console.log(">>>> err: " + err);

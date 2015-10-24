@@ -6,3 +6,17 @@ body {
 a {
   color: #00B7FF;
 }
+
+div.exchangeName {
+  font-size:1.4em;
+  float:left;
+  width:150px;
+}
+div.value {
+  font-size:1.4em;
+  float:left;
+}
+div.lastUpdated {
+  font-size:.8em;
+  float:right;
+}
