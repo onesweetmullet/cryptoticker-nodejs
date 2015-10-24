@@ -16,7 +16,7 @@ angular.module('myApp', [])
                         $scope.btc_usd.push({
                             'exchange': value.exchange,
                             'exchangeFormatted': value.exchangeFormatted,
-                            'lastPrice': value.lastPrice,
+                            'lastPrice': value.lastPriceFormatted,
                             'lastUpdated': getFuzzyDate(value.lastUpdated)
                         });
                     });
@@ -29,7 +29,7 @@ angular.module('myApp', [])
                         $scope.ltc_usd.push({
                             'exchange': value.exchange,
                             'exchangeFormatted': value.exchangeFormatted,
-                            'lastPrice': value.lastPrice,
+                            'lastPrice': value.lastPriceFormatted,
                             'lastUpdated': getFuzzyDate(value.lastUpdated)
                         });
                     });
@@ -42,7 +42,7 @@ angular.module('myApp', [])
                         $scope.doge_btc.push({
                             'exchange': value.exchange,
                             'exchangeFormatted': value.exchangeFormatted,
-                            'lastPrice': value.lastPrice,
+                            'lastPrice': value.lastPriceFormatted,
                             'lastUpdated': getFuzzyDate(value.lastUpdated)
                         });
                     });

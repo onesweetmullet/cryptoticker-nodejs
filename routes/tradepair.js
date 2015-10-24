@@ -76,7 +76,7 @@ exports.getFormatted = function(req, res) {
         //    lastUpdated: new Date()// _headers["date"]
         //};
         //
-        //_return.lastPrice = getFormattedPrice(req.params.exchange, req.params.prefix, req.params.suffix, _response).toString();
+        //_return.lastPrice = getPrice(req.params.exchange, req.params.prefix, req.params.suffix, _response).toString();
 
         res.json(200, { data: getNormalizedData(req.params.exchange, req.params.prefix, req.params.suffix, _response) });
     });
@@ -310,7 +310,8 @@ var getNormalizedData = function(exchange, prefix, suffix, response) {
         lastUpdated: new Date()// _headers["date"]
     };
 
-    _return.lastPrice = getFormattedPrice(exchange, prefix, suffix, response).toString();
+    _return.lastPrice = getPrice(exchange, prefix, suffix, response).toString();
+    _return.lastPriceFormatted = getFormattedPrice(_return.lastPrice, prefix, suffix);
 
     return _return;
 };
@@ -334,7 +335,7 @@ var getExchangeFormatted = function(exchange) {
     }
 };
 
-var getFormattedPrice = function(exchange, prefix, suffix, data) {
+var getPrice = function(exchange, prefix, suffix, data) {
     if (!data)
         return 0;
 
@@ -373,18 +374,29 @@ var getFormattedPrice = function(exchange, prefix, suffix, data) {
                 break;
         }
 
-        if (parseFloat(_value.toString()) > 1) {
-            return parseFloat(_value.toString()).toFixed(2);
-        } else if (parseFloat(_value.toString()) == 0) {
-            return parseFloat(0).toFixed(2);
-        } else {
-            return parseFloat(_value.toString()).toFixed(8);
-        }
+        return _value;
+
     } catch (err) {
         console.log(">>>> err: " + err);
         return 0;
     }
 };
+
+var getFormattedPrice = function(value, prefix, suffix) {
+    if (parseFloat(value.toString()) > 1) {
+        value = parseFloat(value.toString()).toFixed(2);
+    } else if (parseFloat(value.toString()) == 0) {
+        value = parseFloat(0).toFixed(2);
+    } else {
+        value = parseFloat(value.toString()).toFixed(8);
+    }
+
+    if (suffix === "usd") {
+        return '$' + value;
+    } else if (suffix === "btc") {
+        return value + ' btc';
+    }
+}
 
 var getMarketId = function(prefix, suffix) {
     var _markets =
