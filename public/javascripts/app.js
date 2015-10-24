@@ -9,7 +9,7 @@ angular.module('myApp', [])
 
         var intervalTick = function() {
 
-            $http.get('http://localhost:3000/tradepair/getall/btc/usd/formatted')
+            $http.get('./tradepair/getall/btc/usd/formatted')
                 .success(function(response) {
                     $scope.btc_usd = [];
                     angular.forEach(response, function(value, key) {
@@ -22,7 +22,7 @@ angular.module('myApp', [])
                     });
                 });
 
-            $http.get('http://localhost:3000/tradepair/getall/ltc/usd/formatted')
+            $http.get('./tradepair/getall/ltc/usd/formatted')
                 .success(function(response) {
                     $scope.ltc_usd = [];
                     angular.forEach(response, function(value, key) {
@@ -35,7 +35,7 @@ angular.module('myApp', [])
                     });
                 });
 
-            $http.get('http://localhost:3000/tradepair/getall/doge/btc/formatted')
+            $http.get('./tradepair/getall/doge/btc/formatted')
                 .success(function(response) {
                     $scope.doge_btc = [];
                     angular.forEach(response, function(value, key) {
